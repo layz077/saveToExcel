@@ -6,7 +6,8 @@ public class App
     {
         implementation imp = new implementation();
 
-        imp.input();
-        imp.toExcel();
+//        imp.input();
+//        imp.toExcel();
+        imp.showStatus();
     }
 }

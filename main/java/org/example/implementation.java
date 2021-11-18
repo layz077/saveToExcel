@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.time.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
@@ -26,10 +27,9 @@ public class implementation {
     String projectNAme;
     int target;
     int activity;
+    Scanner sc = new Scanner(System.in);
 
     public void input() {
-
-        Scanner sc = new Scanner(System.in);
 
         System.out.println("Enter serial number");
         SNo = sc.nextInt();
@@ -45,7 +45,7 @@ public class implementation {
 
     }
 
-    public String toExcel() {
+    public void toExcel() {
 
     	try {
         	FileInputStream inputStream = new FileInputStream("project.xlsx");
@@ -98,7 +98,7 @@ public class implementation {
             outputStream.flush();
             outputStream.close();
             
-            return "Successful";
+            System.out.println("Successful");
 
 
         } catch (FileNotFoundException e) {
@@ -109,9 +109,62 @@ public class implementation {
 //            e.printStackTrace();
 //        }
         }
-               
-        return null;
+      
         }
+    
+
+    Cell cell;
+    String status;
+    public void showStatus() {
+    	
+    	 System.out.println("Enter the serial number");
+    	 int sid = sc.nextInt();
+    	 
+    	 try {
+			XSSFWorkbook workbook = new XSSFWorkbook("project.xlsx");
+			XSSFSheet sheetMaster = workbook.getSheet("master");
+			List<Row> list = new ArrayList<Row>();			
+ 			 
+			
+			for(int i=1; i<=sheetMaster.getLastRowNum();i++) {
+				        Row row = sheetMaster.getRow(i);
+				        list.add(row);
+				}			
+			
+			list.forEach(e->{
+				
+				cell = e.getCell(0);
+				System.out.println((int)cell.getNumericCellValue());
+			
+			
+			});
+			
+			list.forEach(e->{
+				
+				cell = e.getCell(0);
+				Cell cellStatus = e.getCell(2);
+				
+				if((int)cell.getNumericCellValue()==sid) {
+					  status = cellStatus.getStringCellValue();							  
+				}
+				else {
+					status = "Not found";
+				}
+				
+			});
+			
+			System.out.println(status);
+			workbook.close();
+			
+		
+			
+//		 }	
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    }
 
     }
 
