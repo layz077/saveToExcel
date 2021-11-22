@@ -1,11 +1,14 @@
 package org.example;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.util.SystemOutLogger;
+import org.apache.poi.xssf.streaming.SXSSFRow.CellIterator;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -22,6 +25,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class implementation {
+	Cell cell;
+    String status;
   LocalDate date = LocalDate.now();
     int SNo;
     String projectNAme;
@@ -89,8 +94,6 @@ public class implementation {
         		newRow.createCell(4).setCellValue("NA");
         	}
     	
-
-
 //            System.out.println(row.getCell(2));
 
             FileOutputStream outputStream = new FileOutputStream("project.xlsx");
@@ -113,8 +116,7 @@ public class implementation {
         }
     
 
-    Cell cell;
-    String status;
+    
     public void showStatus() {
     	
     	 System.out.println("Enter the serial number");
@@ -131,41 +133,112 @@ public class implementation {
 				        list.add(row);
 				}			
 			
-			list.forEach(e->{
-				
-				cell = e.getCell(0);
-				System.out.println((int)cell.getNumericCellValue());
+//			list.forEach(e->{
+//				
+//				cell = e.getCell(2);
+//				System.out.println(cell.getStringCellValue());
+//			
+//			
+//			});
 			
-			
-			});
-			
-			list.forEach(e->{
+			list.forEach(row->{
 				
-				cell = e.getCell(0);
-				Cell cellStatus = e.getCell(2);
-				
+				cell = row.getCell(0);
+				Cell cellStatus = row.getCell(2);
 				if((int)cell.getNumericCellValue()==sid) {
-					  status = cellStatus.getStringCellValue();							  
+					System.out.println(cellStatus.getStringCellValue());
+//					  status = cellStatus.getStringCellValue();							  
 				}
 				else {
 					status = "Not found";
 				}
-				
+				 
 			});
 			
-			System.out.println(status);
+//			System.out.println(status);
 			workbook.close();
-			
-		
-			
-//		 }	
+				
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}    	 
     	
     }
+    
+    public void autoInputStatus() {
+
+    	 
+			try {
+				FileInputStream file = new FileInputStream("project.xlsx");
+				Workbook workbook = WorkbookFactory.create(file);
+				Sheet sheet = workbook.getSheet("new");
+				
+				List<Row> list = new ArrayList<Row>();
+				
+				for(int i=2; i<=sheet.getLastRowNum();i++) {
+				      Row row = sheet.getRow(i);
+				      list.add(row);
+				}
+				
+				list.forEach(row->{
+					
+					   Cell cellTarget = row.getCell(2);
+					   Cell cellActivity = row.getCell(3);
+					   
+					   if((cellTarget.getNumericCellValue()>1 && cellTarget.getNumericCellValue() <10) || (cellActivity.getNumericCellValue()>1 && cellActivity.getNumericCellValue()<10)) {
+			        		row.createCell(4).setCellValue("On Going");
+			        	}
+			        	else if(cellTarget.getNumericCellValue()==10 && cellActivity.getNumericCellValue() ==10) {
+			        		row.createCell(4).setCellValue("Completed");
+			        	}
+			        	else if(cellActivity.getNumericCellValue()==0 && cellTarget.getNumericCellValue()>1 &&cellTarget.getNumericCellValue()<9) {
+			        		row.createCell(4).setCellValue("Pending");
+			        	}
+			        	else if(cellActivity.getNumericCellValue() ==0 || cellTarget.getNumericCellValue()==0) {
+			        		row.createCell(4).setCellValue("Cancelled");
+			        	}
+			        	else {
+			        		row.createCell(4).setCellValue("NA");
+			        	}
+					
+				});
+				
+				FileOutputStream outputFile = new FileOutputStream("project.xlsx");
+				workbook.write(outputFile);
+				workbook.close();
+				file.close();
+				
+				System.out.println("Successful");
+				
+			} catch (EncryptedDocumentException | IOException e) {
+				e.printStackTrace();
+			}
+    	
 
     }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

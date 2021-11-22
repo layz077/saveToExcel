@@ -8,6 +8,7 @@ public class App
 
 //        imp.input();
 //        imp.toExcel();
-        imp.showStatus();
+//        imp.showStatus();
+        imp.autoInputStatus();
     }
 }
