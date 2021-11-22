@@ -36,6 +36,7 @@ public class implementation {
 
     public void input() {
 
+    try {	
         System.out.println("Enter serial number");
         SNo = sc.nextInt();
 
@@ -48,6 +49,10 @@ public class implementation {
         System.out.println("Enter activity value");
         activity = sc.nextInt();     
 
+    }
+    catch(Exception e) {
+    	System.out.println("Enter correct values");
+    }
     }
 
     public void toExcel() {
